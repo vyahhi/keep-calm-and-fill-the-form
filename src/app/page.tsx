@@ -111,7 +111,7 @@ export default function Home() {
   const detectFields = async () => {
     if (!file || detecting) return;
     setDetecting(true);
-    setStatus("Detecting fillable fields with Gemini…");
+    setStatus("Detecting fillable fields…");
     const formData = new FormData();
     formData.append("file", file);
 
