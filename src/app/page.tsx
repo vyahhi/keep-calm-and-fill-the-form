@@ -305,9 +305,26 @@ export default function Home() {
         <div className={styles.centerStack}>
           <h1 className={styles.tagline}>Upload any form and we’ll help you fill it</h1>
           <label
-            className={styles.uploadButtonLarge}
+            className={styles.dropZone}
             aria-disabled={detecting}
             style={{ pointerEvents: detecting ? "none" : "auto", opacity: detecting ? 0.6 : 1 }}
+            onDragOver={(e) => {
+              e.preventDefault();
+            }}
+            onDrop={(e) => {
+              e.preventDefault();
+              const file = e.dataTransfer.files?.[0];
+              if (file) {
+                const dt = new DataTransfer();
+                dt.items.add(file);
+                const input = e.currentTarget.querySelector("input");
+                if (input) {
+                  input.files = dt.files;
+                  const event = new Event("change", { bubbles: true });
+                  input.dispatchEvent(event);
+                }
+              }
+            }}
           >
             <input
               type="file"
@@ -315,7 +332,12 @@ export default function Home() {
               onChange={handleFileChange}
               disabled={detecting}
             />
-            {detecting ? "Detecting fillable fields…" : "Choose PDF or image"}
+            <div className={styles.dropContent}>
+              <div className={styles.dropTitle}>
+                {detecting ? "Detecting fillable fields…" : "Choose PDF or image"}
+              </div>
+              {!detecting && <div className={styles.dropHint}>or drag and drop here</div>}
+            </div>
           </label>
           {status && !detecting ? <p className={styles.status}>{status}</p> : null}
         </div>
