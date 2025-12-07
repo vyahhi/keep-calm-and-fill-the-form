@@ -392,7 +392,6 @@ export default function Home() {
           <section className={styles.previewPanel}>
             <div className={styles.panelHeader}>
               <h2>Uploaded file</h2>
-              {previewUrl ? <span className={styles.badge}>Uploaded</span> : null}
             </div>
             {previewUrl ? (
                   <iframe
