@@ -1,0 +1,10 @@
+services:
+  - type: web
+    name: keep-calm-and-fill-the-form
+    env: node
+    branch: main
+    buildCommand: npm install && npm run build
+    startCommand: npm run start
+    envVars:
+      - key: GEMINI_API_KEY
+        sync: false
