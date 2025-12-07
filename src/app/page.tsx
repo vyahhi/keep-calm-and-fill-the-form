@@ -37,6 +37,7 @@ export default function Home() {
   const showStep2 = fields.length > 0;
   const layoutRef = useRef<HTMLDivElement | null>(null);
   const draggingRef = useRef(false);
+  const [isDragging, setIsDragging] = useState(false);
   const previewUrl = useMemo(() => pdfUrl || undefined, [pdfUrl]);
 
   useEffect(() => {
@@ -310,6 +311,7 @@ export default function Home() {
     };
     const handleUp = () => {
       draggingRef.current = false;
+      setIsDragging(false);
     };
     window.addEventListener("mousemove", handleMove);
     window.addEventListener("mouseup", handleUp);
@@ -398,7 +400,14 @@ export default function Home() {
           </div>
         </header>
 
-        <main className={styles.layout} ref={layoutRef}>
+        <main
+          className={`${styles.layout} ${isDragging ? styles.dragging : ""}`}
+          ref={layoutRef}
+          onMouseLeave={() => {
+            draggingRef.current = false;
+            setIsDragging(false);
+          }}
+        >
           <section
             className={styles.formPanel}
             style={{ flexBasis: `${split}%`, minWidth: "42%" }}
@@ -448,6 +457,7 @@ export default function Home() {
             onMouseDown={(e) => {
               e.preventDefault();
               draggingRef.current = true;
+              setIsDragging(true);
               onDrag(e.clientX);
             }}
           />

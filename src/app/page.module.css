@@ -138,6 +138,10 @@
   padding: 0 24px 24px;
 }
 
+.dragging {
+  user-select: none;
+}
+
 .formPanel,
 .previewPanel {
   background: transparent;
@@ -258,15 +262,12 @@
 }
 
 .splitter {
-  width: 10px;
+  width: 14px;
   cursor: col-resize;
-  background: linear-gradient(
-    180deg,
-    rgba(255, 255, 255, 0.06),
-    rgba(255, 255, 255, 0.02)
-  );
-  border-left: 1px solid rgba(255, 255, 255, 0.05);
-  border-right: 1px solid rgba(255, 255, 255, 0.05);
+  background: linear-gradient(180deg, rgba(255, 255, 255, 0.08), rgba(255, 255, 255, 0.02));
+  border-left: 1px solid rgba(255, 255, 255, 0.06);
+  border-right: 1px solid rgba(255, 255, 255, 0.06);
+  margin: 0 6px;
 }
 
 @media (max-width: 960px) {
