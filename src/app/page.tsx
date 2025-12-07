@@ -301,7 +301,7 @@ export default function Home() {
                   accept="application/pdf,image/*"
                   onChange={handleFileChange}
                 />
-                {file ? "Replace file" : "Upload PDF or image"}
+                Upload PDF or image
               </label>
             </div>
             {status && <p className={styles.status}>{status}</p>}
@@ -330,15 +330,8 @@ export default function Home() {
                 accept="application/pdf,image/*"
                 onChange={handleFileChange}
               />
-              {file ? "Replace file" : "Upload PDF or image"}
+              Upload PDF or image
             </label>
-            <button
-              className={styles.secondaryButton}
-              onClick={detectFields}
-              disabled={!file || detecting}
-            >
-              {detecting ? "Finding…" : "Re-run detection"}
-            </button>
           </div>
         </header>
 
@@ -348,9 +341,18 @@ export default function Home() {
               <div>
                 <h2>Form builder</h2>
               </div>
-              <span className={styles.badge}>
-                {fields.length ? `${fields.length} fields` : "Awaiting detection"}
-              </span>
+              <div className={styles.badgeRow}>
+                <span className={styles.badge}>
+                  {fields.length ? `${fields.length} field(s)` : "Awaiting detection"}
+                </span>
+                <button
+                  className={styles.secondaryButtonSmall}
+                  onClick={detectFields}
+                  disabled={!file || detecting}
+                >
+                  {detecting ? "Finding…" : "Re-run detection"}
+                </button>
+              </div>
             </div>
 
             {!file && (
@@ -376,19 +378,21 @@ export default function Home() {
                   >
                     {filling ? "Overlaying…" : "Apply answers & download"}
                   </button>
-                  <button
-                    type="button"
-                    className={styles.ghostButton}
-                    onClick={resetAll}
-                    disabled={detecting || filling}
-                  >
-                    New file
-                  </button>
                 </div>
               </form>
             )}
 
-            {status && <p className={styles.status}>{status}</p>}
+            <div className={styles.footerActions}>
+              <button
+                type="button"
+                className={styles.ghostButton}
+                onClick={resetAll}
+                disabled={detecting || filling}
+              >
+                Upload new form
+              </button>
+              {status && <p className={styles.status}>{status}</p>}
+            </div>
           </section>
 
           <section className={styles.previewPanel}>
