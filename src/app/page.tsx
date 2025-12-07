@@ -329,7 +329,6 @@ export default function Home() {
             <div className={styles.posterLine}>FILL THE</div>
             <div className={styles.posterLine}>FORM</div>
           </div>
-          <p className={styles.subhead}>Upload any form and we’ll help you fill it.</p>
           <label
             className={styles.dropZone}
             aria-disabled={detecting}
@@ -365,6 +364,9 @@ export default function Home() {
               {!detecting && <div className={styles.dropHint}>or drag and drop here</div>}
             </div>
           </label>
+          {!detecting ? (
+            <p className={styles.subhead}>Upload any form and we’ll help you fill it.</p>
+          ) : null}
           {status && !detecting ? <p className={styles.status}>{status}</p> : null}
         </div>
       </div>
