@@ -33,13 +33,7 @@ export default function Home() {
   const [filling, setFilling] = useState(false);
   const [status, setStatus] = useState<string | null>(null);
   const showStep2 = fields.length > 0;
-  const previewUrl = useMemo(
-    () =>
-      pdfUrl
-        ? `${pdfUrl}#toolbar=0&navpanes=0&scrollbar=0&view=FitH`
-        : undefined,
-    [pdfUrl],
-  );
+  const previewUrl = useMemo(() => pdfUrl || undefined, [pdfUrl]);
 
   useEffect(() => {
     return () => {
