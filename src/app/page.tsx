@@ -409,17 +409,9 @@ export default function Home() {
               </div>
             </div>
 
-            {!file && (
-              <div className={styles.emptyState}>
-                <p>Drop in any PDF or image of a form to begin.</p>
-              </div>
-            )}
-
-            {file && !hasForm && (
-              <div className={styles.emptyState}>
-                <p>No fields yet. Run “Find fields” to map this file.</p>
-              </div>
-            )}
+            {status && status.trim() ? (
+              <div className={styles.status}>{status}</div>
+            ) : null}
 
             {hasForm && (
               <form className={styles.form} onSubmit={onSubmit}>
@@ -436,9 +428,7 @@ export default function Home() {
               </form>
             )}
 
-            <div className={styles.footerActions}>
-              {status && status.trim() ? <p className={styles.status}>{status}</p> : null}
-            </div>
+            <div className={styles.footerActions} />
           </section>
 
           <div
