@@ -282,22 +282,20 @@ export default function Home() {
   const heroDescription = useMemo(() => {
     if (!file)
       return "Upload a PDF or image of a form; we’ll detect boxes and build fields for you.";
-    if (!hasForm) return "Find fields to turn this flat file into a quick web form.";
+    if (!hasForm) return "Finding fields to turn this file into a quick web form.";
     return "Review detected fields, fill them out, and download an overlaid PDF.";
   }, [file, hasForm]);
 
-  if (!showStep2) {
-    return (
-      <div className={styles.page}>
-        <div className={styles.container}>
-          <header className={styles.header}>
-            <div className={styles.headerCopy}>
-              <div className={styles.stepLabel}>Step 1 · Upload & auto-detect</div>
-              <h1>Image/PDF to form overlay</h1>
-              <p className={styles.subhead}>{heroDescription}</p>
-            </div>
+  const StepOne = () => (
+    <div className={styles.page}>
+      <div className={styles.container}>
+        <div className={styles.stepOneCenter}>
+          <div className={styles.heroBlock}>
+            <p className={styles.tagline}>Image/PDF to form overlay</p>
+            <h1>Upload to start</h1>
+            <p className={styles.subhead}>{heroDescription}</p>
             <div className={styles.actions}>
-              <label className={styles.uploadButton}>
+              <label className={styles.uploadButtonLarge}>
                 <input
                   type="file"
                   accept="application/pdf,image/*"
@@ -305,70 +303,23 @@ export default function Home() {
                 />
                 {file ? "Replace file" : "Upload PDF or image"}
               </label>
-              <button
-                className={styles.secondaryButton}
-                onClick={detectFields}
-                disabled={!file || detecting}
-              >
-                {detecting ? "Finding…" : "Re-run detection"}
-              </button>
             </div>
-          </header>
-
-          <div className={styles.stepOneBody}>
-            <div className={styles.stepCard}>
-              <p className={styles.stepLabel}>Upload & detect</p>
-              <p className={styles.statusLarge}>
-                {status ||
-                  (file
-                    ? detecting
-                      ? "Detecting fields…"
-                      : "Ready to detect."
-                    : "Drop a PDF or image to get started.")}
-              </p>
-              {file ? (
-                <button
-                  className={styles.primaryButton}
-                  disabled={detecting}
-                  onClick={detectFields}
-                >
-                  {detecting ? "Finding…" : "Detect fields"}
-                </button>
-              ) : null}
-            </div>
-
-            <div className={styles.stepPreview}>
-              <div className={styles.panelHeader}>
-                <div>
-                  <div className={styles.stepLabel}>Preview</div>
-                  <h2>File preview</h2>
-                </div>
-                {pdfUrl ? <span className={styles.badge}>Ready</span> : null}
-              </div>
-              {pdfUrl ? (
-                <iframe
-                  title="PDF preview"
-                  src={pdfUrl}
-                  className={styles.previewFrame}
-                />
-              ) : (
-                <div className={styles.previewPlaceholder}>
-                  <p>Your PDF/image will preview here.</p>
-                </div>
-              )}
-            </div>
+            {status && <p className={styles.status}>{status}</p>}
           </div>
         </div>
       </div>
-    );
-  }
+    </div>
+  );
 
   return (
     <div className={styles.page}>
       <div className={styles.container}>
+        {!showStep2 ? (
+          <StepOne />
+        ) : (
+          <>
         <header className={styles.header}>
           <div className={styles.headerCopy}>
-            <div className={styles.stepLabel}>Step 1 · Upload & auto-detect</div>
             <h1>Image/PDF to form overlay</h1>
             <p className={styles.subhead}>{heroDescription}</p>
           </div>
@@ -395,7 +346,6 @@ export default function Home() {
           <section className={styles.formPanel}>
             <div className={styles.panelHeader}>
               <div>
-                <div className={styles.stepLabel}>Step 2 · Fill & download</div>
                 <h2>Form builder</h2>
               </div>
               <span className={styles.badge}>
@@ -459,6 +409,8 @@ export default function Home() {
             )}
           </section>
         </main>
+          </>
+        )}
       </div>
     </div>
   );
