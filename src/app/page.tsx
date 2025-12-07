@@ -291,27 +291,23 @@ export default function Home() {
 
   const StepOne = () => (
     <div className={styles.page}>
-      <div className={styles.container}>
-        <div className={styles.stepOneCenter}>
-          <div className={styles.heroBlock}>
-            <h1 className={styles.tagline}>Upload any form and we’ll help you fill it</h1>
-            <div className={styles.actions}>
-              <label
-                className={styles.uploadButtonLarge}
-                aria-disabled={detecting}
-                style={{ pointerEvents: detecting ? "none" : "auto", opacity: detecting ? 0.6 : 1 }}
-              >
-                <input
-                  type="file"
-                  accept="application/pdf,image/*"
-                  onChange={handleFileChange}
-                  disabled={detecting}
-                />
-                {detecting ? "Detecting…" : "Choose PDF or image"}
-              </label>
-            </div>
-            {status && <p className={styles.status}>{status}</p>}
-          </div>
+      <div className={styles.containerBare}>
+        <div className={styles.centerStack}>
+          <h1 className={styles.tagline}>Upload any form and we’ll help you fill it</h1>
+          <label
+            className={styles.uploadButtonLarge}
+            aria-disabled={detecting}
+            style={{ pointerEvents: detecting ? "none" : "auto", opacity: detecting ? 0.6 : 1 }}
+          >
+            <input
+              type="file"
+              accept="application/pdf,image/*"
+              onChange={handleFileChange}
+              disabled={detecting}
+            />
+            {detecting ? "Detecting…" : "Choose PDF or image"}
+          </label>
+          {status && <p className={styles.status}>{status}</p>}
         </div>
       </div>
     </div>
