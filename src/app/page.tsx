@@ -330,7 +330,7 @@ export default function Home() {
           <>
         <header className={styles.header}>
           <div className={styles.headerCopy}>
-            <h1>Fill any PDF or form image instantly</h1>
+            <h1>Upload any form file and we’ll help you fill it</h1>
             <p className={styles.subhead}>{heroDescription}</p>
           </div>
           <div className={styles.actions}>
