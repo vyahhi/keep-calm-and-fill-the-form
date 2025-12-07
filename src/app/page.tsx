@@ -32,6 +32,7 @@ export default function Home() {
   const [detecting, setDetecting] = useState(false);
   const [filling, setFilling] = useState(false);
   const [status, setStatus] = useState<string | null>(null);
+  const [formTitle, setFormTitle] = useState("Form");
   const showStep2 = fields.length > 0;
   const previewUrl = useMemo(() => pdfUrl || undefined, [pdfUrl]);
 
@@ -52,6 +53,7 @@ export default function Home() {
     setStatus(null);
     setDetecting(false);
     setFilling(false);
+    setFormTitle("Form");
   };
 
   const convertImageToPdf = async (imageFile: File) => {
@@ -114,7 +116,7 @@ export default function Home() {
         method: "POST",
         body: formData,
       });
-      const data = (await res.json()) as { fields?: DetectedField[]; error?: string };
+      const data = (await res.json()) as { fields?: DetectedField[]; error?: string; title?: string };
       if (!res.ok) {
         setStatus(data.error || "Detection failed");
         return;
@@ -127,6 +129,11 @@ export default function Home() {
       });
       setValues(initialValues);
       setStatus(data.fields.length > 0 ? null : "No fields detected");
+      if (data.title && data.title.trim()) {
+        setFormTitle(data.title.trim());
+      } else {
+        setFormTitle("Form");
+      }
     } catch (error) {
       console.error(error);
       const message =
@@ -341,7 +348,7 @@ export default function Home() {
           <section className={styles.formPanel}>
             <div className={styles.panelHeader}>
               <div>
-                <h2>Form</h2>
+                <h2>{formTitle}</h2>
               </div>
               <div className={styles.badgeRow}>
                 <span className={styles.badge}>

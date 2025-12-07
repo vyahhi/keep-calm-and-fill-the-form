@@ -26,6 +26,7 @@ export interface DetectedField {
 
 export interface DetectionResponse {
   fields: DetectedField[];
+  title?: string;
 }
 
 export interface FillPayload {

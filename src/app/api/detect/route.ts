@@ -8,13 +8,15 @@ export const runtime = "nodejs";
 const SYSTEM_PROMPT = `
 You are mapping form fields in a PDF (including flat/image-only PDFs) for HTML rendering.
 Respond with JSON only, no prose or markdown fencing.
-Return an array of objects with keys:
-- name: unique id matching the PDF field name when possible (use readable slugs otherwise)
-- label: short user-facing label
-- type: one of text,email,number,date,checkbox,radio,select
-- placeholder: optional short hint
-- options: only for radio/select (array of strings)
-- bbox: optional object { page, x, y, width, height } with normalized coordinates (0-1, origin top-left)
+Return an object with keys:
+- title: short form title inferred from the document (string)
+- fields: array of objects with keys:
+  - name: unique id matching the PDF field name when possible (use readable slugs otherwise)
+  - label: short user-facing label
+  - type: one of text,email,number,date,checkbox,radio,select
+  - placeholder: optional short hint
+  - options: only for radio/select (array of strings)
+  - bbox: optional object { page, x, y, width, height } with normalized coordinates (0-1, origin top-left)
 
 Prefer existing AcroForm names if present, keep array short (max 30 items).
 If you are unsure about a field, omit it.
@@ -82,7 +84,7 @@ function detectFieldKind(
   return "unknown";
 }
 
-function parseFields(raw: string): DetectedField[] {
+function parseResponse(raw: string): { fields: DetectedField[]; title?: string } {
   const jsonBlock = raw.match(/```json\s*([\s\S]*?)```/i)?.[1] ?? raw;
   const allowedTypes: DetectedField["type"][] = [
     "text",
@@ -95,8 +97,9 @@ function parseFields(raw: string): DetectedField[] {
   ];
   try {
     const parsed = JSON.parse(jsonBlock);
-    if (!Array.isArray(parsed)) return [];
-    return parsed
+    const payload = Array.isArray(parsed) ? { fields: parsed } : parsed;
+    const fieldsRaw = Array.isArray(payload?.fields) ? payload.fields : [];
+    const fields = fieldsRaw
       .map((item) => ({
         name: String(item.name ?? "").trim(),
         label: String(item.label ?? item.name ?? "").trim(),
@@ -131,9 +134,16 @@ function parseFields(raw: string): DetectedField[] {
             : undefined,
       }))
       .filter((f) => f.name && f.label) as DetectedField[];
+
+    const title =
+      typeof payload?.title === "string" && payload.title.trim().length > 0
+        ? payload.title.trim()
+        : undefined;
+
+    return { fields, title };
   } catch (error) {
     console.error("Failed to parse Gemini response", error, raw);
-    return [];
+    return { fields: [], title: undefined };
   }
 }
 
@@ -182,7 +192,8 @@ export async function POST(request: NextRequest) {
     ]);
 
     const text = result.response.text().trim();
-    const fields = parseFields(text);
+    const parsed = parseResponse(text);
+    const { fields } = parsed;
 
     // Enrich detected fields with actual PDF form metadata (options/types)
     if (fields.length) {
@@ -227,7 +238,7 @@ export async function POST(request: NextRequest) {
       );
     }
 
-    return NextResponse.json({ fields });
+    return NextResponse.json({ fields, title: parsed.title });
   } catch (error) {
     console.error("Gemini detection error", error);
     return NextResponse.json(
