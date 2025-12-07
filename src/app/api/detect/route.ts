@@ -84,6 +84,30 @@ function detectFieldKind(
   return "unknown";
 }
 
+function assignFallbackBboxes(fields: DetectedField[]) {
+  if (!fields.length) return fields;
+  const haveBBox = fields.some((f) => f.bbox);
+  if (haveBBox) return fields;
+
+  const marginX = 0.04;
+  const usableWidth = 1 - marginX * 2;
+  const height = 0.06;
+  const step = Math.min(0.12, (1 - marginX * 2) / (fields.length + 2));
+  let y = 0.18;
+
+  return fields.map((field) => {
+    const bbox = {
+      page: 0,
+      x: marginX,
+      y,
+      width: usableWidth,
+      height,
+    };
+    y += step;
+    return { ...field, bbox };
+  });
+}
+
 function parseResponse(raw: string): { fields: DetectedField[]; title?: string } {
   const jsonBlock = raw.match(/```json\s*([\s\S]*?)```/i)?.[1] ?? raw;
   const allowedTypes: DetectedField["type"][] = [
@@ -230,10 +254,12 @@ export async function POST(request: NextRequest) {
       }
     }
 
-    if (fields.length) {
+    const finalFields = assignFallbackBboxes(fields);
+
+    if (finalFields.length) {
       console.log(
         "Detected fields:",
-        fields.map((f) => ({
+        finalFields.map((f) => ({
           name: f.name,
           label: f.label,
           type: f.type,
@@ -243,7 +269,7 @@ export async function POST(request: NextRequest) {
       );
     }
 
-    return NextResponse.json({ fields, title: parsed.title });
+    return NextResponse.json({ fields: finalFields, title: parsed.title });
   } catch (error) {
     console.error("Gemini detection error", error);
     return NextResponse.json(
