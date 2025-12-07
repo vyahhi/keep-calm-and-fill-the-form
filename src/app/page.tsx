@@ -132,7 +132,7 @@ export default function Home() {
           field.type === "checkbox" ? false : field.options?.[0] ?? "";
       });
       setValues(initialValues);
-      setStatus(data.fields.length > 0 ? "" : "No fields detected");
+      setStatus(data.fields.length > 0 ? null : "No fields detected");
     } catch (error) {
       console.error(error);
       const message =
