@@ -305,9 +305,9 @@ export default function Home() {
               onChange={handleFileChange}
               disabled={detecting}
             />
-            {detecting ? "Detecting…" : "Choose PDF or image"}
+            {detecting ? "Detecting fillable fields…" : "Choose PDF or image"}
           </label>
-          {status && <p className={styles.status}>{status}</p>}
+          {status && !detecting ? <p className={styles.status}>{status}</p> : null}
         </div>
       </div>
     </div>
