@@ -41,6 +41,17 @@ export default function Home() {
 
   const hasForm = fields.length > 0;
 
+  const resetAll = () => {
+    if (pdfUrl) URL.revokeObjectURL(pdfUrl);
+    setFile(null);
+    setPdfUrl(undefined);
+    setFields([]);
+    setValues({});
+    setStatus(null);
+    setDetecting(false);
+    setFilling(false);
+  };
+
   const convertImageToPdf = async (imageFile: File) => {
     const bytes = new Uint8Array(await imageFile.arrayBuffer());
     const pdfDoc = await PDFDocument.create();
@@ -77,10 +88,11 @@ export default function Home() {
         const { file: pdfFile, url } = await convertImageToPdf(selected);
         setFile(pdfFile);
         setPdfUrl(url);
-        setStatus("Image converted to PDF for detection.");
+        setStatus("Image converted to PDF; detecting fields…");
       } else {
         setFile(selected);
         setPdfUrl(URL.createObjectURL(selected));
+        setStatus("Detecting fields…");
       }
     } catch (error) {
       console.error(error);
@@ -89,7 +101,7 @@ export default function Home() {
   };
 
   const detectFields = async () => {
-    if (!file) return;
+    if (!file || detecting) return;
     setDetecting(true);
     setStatus("Detecting fillable fields with Gemini…");
     const formData = new FormData();
@@ -128,6 +140,13 @@ export default function Home() {
       setDetecting(false);
     }
   };
+
+  useEffect(() => {
+    if (file) {
+      void detectFields();
+    }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [file]);
 
   const onSubmit = async (event: FormEvent) => {
     event.preventDefault();
@@ -270,8 +289,8 @@ export default function Home() {
     <div className={styles.page}>
       <div className={styles.container}>
         <header className={styles.header}>
-          <div>
-            <p className={styles.tag}>Flat file → Web form</p>
+          <div className={styles.headerCopy}>
+            <div className={styles.stepLabel}>Step 1 · Upload & auto-detect</div>
             <h1>Image/PDF to form overlay</h1>
             <p className={styles.subhead}>{heroDescription}</p>
           </div>
@@ -289,7 +308,7 @@ export default function Home() {
               onClick={detectFields}
               disabled={!file || detecting}
             >
-              {detecting ? "Finding…" : "Find fields"}
+              {detecting ? "Finding…" : "Re-run detection"}
             </button>
           </div>
         </header>
@@ -297,7 +316,10 @@ export default function Home() {
         <main className={styles.layout}>
           <section className={styles.formPanel}>
             <div className={styles.panelHeader}>
-              <h2>Form builder</h2>
+              <div>
+                <div className={styles.stepLabel}>Step 2 · Fill & download</div>
+                <h2>Form builder</h2>
+              </div>
               <span className={styles.badge}>
                 {fields.length ? `${fields.length} fields` : "Awaiting detection"}
               </span>
@@ -318,13 +340,23 @@ export default function Home() {
             {hasForm && (
               <form className={styles.form} onSubmit={onSubmit}>
                 {fields.map((field) => renderField(field))}
-                <button
-                  type="submit"
-                  className={styles.primaryButton}
-                  disabled={filling}
-                >
-                  {filling ? "Overlaying…" : "Apply answers & download"}
-                </button>
+                <div className={styles.formActions}>
+                  <button
+                    type="submit"
+                    className={styles.primaryButton}
+                    disabled={filling}
+                  >
+                    {filling ? "Overlaying…" : "Apply answers & download"}
+                  </button>
+                  <button
+                    type="button"
+                    className={styles.ghostButton}
+                    onClick={resetAll}
+                    disabled={detecting || filling}
+                  >
+                    New file
+                  </button>
+                </div>
               </form>
             )}
 

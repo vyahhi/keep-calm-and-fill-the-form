@@ -6,43 +6,32 @@
   color: #dfe7ff;
   display: flex;
   justify-content: center;
-  padding: 48px 24px 72px;
+  align-items: stretch;
 }
 
 .container {
   width: 100%;
-  max-width: 1200px;
+  min-height: 100vh;
   background: #0d1320;
-  border: 1px solid rgba(255, 255, 255, 0.06);
-  border-radius: 28px;
+  border-left: 1px solid rgba(255, 255, 255, 0.06);
+  border-right: 1px solid rgba(255, 255, 255, 0.06);
   box-shadow: 0 30px 120px rgba(0, 0, 0, 0.35);
   overflow: hidden;
+  padding: 32px 32px 48px;
 }
 
 .header {
   display: flex;
   justify-content: space-between;
   gap: 24px;
-  padding: 32px 32px 16px;
+  padding-bottom: 16px;
   border-bottom: 1px solid rgba(255, 255, 255, 0.06);
 }
 
-.tag {
-  display: inline-block;
-  padding: 6px 12px;
-  background: linear-gradient(90deg, #4cc9f0, #f38b64);
-  color: #0d1320;
-  border-radius: 999px;
-  font-weight: 700;
-  letter-spacing: 0.04em;
-  font-size: 12px;
-  margin-bottom: 12px;
-}
-
-.header h1 {
-  font-size: 36px;
+.headerCopy h1 {
+  font-size: 32px;
   line-height: 1.2;
-  margin-bottom: 8px;
+  margin-bottom: 6px;
 }
 
 .subhead {
@@ -56,28 +45,10 @@
   gap: 12px;
 }
 
-.uploadButton {
-  background: #1a2335;
-  color: #f3f6ff;
-  border: 1px dashed rgba(255, 255, 255, 0.2);
-  padding: 12px 16px;
-  border-radius: 14px;
-  cursor: pointer;
-  font-weight: 600;
-  transition: border-color 0.2s ease, transform 0.2s ease;
-}
-
-.uploadButton input {
-  display: none;
-}
-
-.uploadButton:hover {
-  border-color: #4cc9f0;
-  transform: translateY(-1px);
-}
-
+.uploadButton,
 .secondaryButton,
-.primaryButton {
+.primaryButton,
+.ghostButton {
   background: #0d1828;
   color: #cce0ff;
   border: 1px solid rgba(255, 255, 255, 0.2);
@@ -95,24 +66,43 @@
   border: none;
 }
 
+.ghostButton {
+  background: transparent;
+}
+
+.uploadButton input {
+  display: none;
+}
+
+.uploadButton {
+  border-style: dashed;
+}
+
 .secondaryButton:hover,
-.primaryButton:hover {
+.primaryButton:hover,
+.uploadButton:hover,
+.ghostButton:hover {
   transform: translateY(-1px);
   border-color: #4cc9f0;
 }
 
+.ghostButton:hover {
+  background: rgba(255, 255, 255, 0.05);
+}
+
 .secondaryButton:disabled,
 .primaryButton:disabled,
-.uploadButton:disabled {
+.uploadButton:disabled,
+.ghostButton:disabled {
   opacity: 0.5;
   cursor: not-allowed;
 }
 
 .layout {
   display: grid;
-  grid-template-columns: 1.2fr 1fr;
+  grid-template-columns: 1.1fr 1fr;
   gap: 24px;
-  padding: 24px 32px 32px;
+  padding: 24px 0 0;
 }
 
 .formPanel,
@@ -203,6 +193,11 @@
   font-size: 14px;
 }
 
+.formActions {
+  display: flex;
+  gap: 12px;
+}
+
 .previewFrame {
   border: none;
   width: 100%;
@@ -236,12 +231,20 @@
     font-size: 28px;
   }
 
-  .page {
-    padding: 24px 12px 48px;
+  .container {
+    padding: 20px 16px 32px;
   }
 
   .formPanel,
   .previewPanel {
     min-height: 400px;
   }
+}
+
+.stepLabel {
+  font-size: 12px;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  color: #8fb8ff;
+  margin-bottom: 4px;
 }
