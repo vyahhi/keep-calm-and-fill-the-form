@@ -298,7 +298,7 @@ export default function Home() {
       <div className={styles.container}>
         <div className={styles.stepOneCenter}>
           <div className={styles.heroBlock}>
-            <p className={styles.tagline}>Upload any form image or PDF and fill it instantly</p>
+            <p className={styles.tagline}>Upload any form file and we’ll help you fill it</p>
             <h1>Upload to start</h1>
             <p className={styles.subhead}>{heroDescription}</p>
             <div className={styles.actions}>
