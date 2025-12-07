@@ -98,42 +98,46 @@ function parseResponse(raw: string): { fields: DetectedField[]; title?: string }
   try {
     const parsed = JSON.parse(jsonBlock);
     const payload = Array.isArray(parsed) ? { fields: parsed } : parsed;
-    const fieldsRaw = Array.isArray(payload?.fields) ? payload.fields : [];
+    const fieldsRaw = Array.isArray(payload?.fields)
+      ? (payload.fields as unknown[])
+      : [];
     const fields = fieldsRaw
-      .map((item) => ({
-        name: String(item.name ?? "").trim(),
-        label: String(item.label ?? item.name ?? "").trim(),
-        type: allowedTypes.includes(
-          String(item.type ?? "").toLowerCase() as DetectedField["type"],
-        )
-          ? (String(item.type).toLowerCase() as DetectedField["type"])
-          : "text",
-        placeholder: item.placeholder ? String(item.placeholder) : undefined,
-        options: Array.isArray(item.options)
-          ? item.options.map((opt: unknown) => String(opt))
-          : undefined,
-        bbox:
-          item.bbox &&
-          typeof item.bbox === "object" &&
-          typeof item.bbox.page === "number" &&
-          typeof item.bbox.x === "number" &&
-          typeof item.bbox.y === "number"
+      .map((raw) => {
+        if (!raw || typeof raw !== "object") return null;
+        const item = raw as Record<string, unknown>;
+        const bboxRaw = item.bbox as Record<string, unknown> | undefined;
+
+        const bbox =
+          bboxRaw &&
+          typeof bboxRaw.page === "number" &&
+          typeof bboxRaw.x === "number" &&
+          typeof bboxRaw.y === "number"
             ? {
-                page: item.bbox.page,
-                x: item.bbox.x,
-                y: item.bbox.y,
-                width:
-                  typeof item.bbox.width === "number"
-                    ? item.bbox.width
-                    : undefined,
+                page: bboxRaw.page,
+                x: bboxRaw.x,
+                y: bboxRaw.y,
+                width: typeof bboxRaw.width === "number" ? bboxRaw.width : undefined,
                 height:
-                  typeof item.bbox.height === "number"
-                    ? item.bbox.height
-                    : undefined,
+                  typeof bboxRaw.height === "number" ? bboxRaw.height : undefined,
               }
+            : undefined;
+
+        const typeValue = String(item.type ?? "").toLowerCase();
+
+        return {
+          name: String(item.name ?? "").trim(),
+          label: String(item.label ?? item.name ?? "").trim(),
+          type: allowedTypes.includes(typeValue as DetectedField["type"])
+            ? (typeValue as DetectedField["type"])
+            : "text",
+          placeholder: item.placeholder ? String(item.placeholder) : undefined,
+          options: Array.isArray(item.options)
+            ? item.options.map((opt: unknown) => String(opt))
             : undefined,
-      }))
-      .filter((f) => f.name && f.label) as DetectedField[];
+          bbox,
+        } as DetectedField;
+      })
+      .filter((f): f is DetectedField => Boolean(f && f.name && f.label));
 
     const title =
       typeof payload?.title === "string" && payload.title.trim().length > 0
