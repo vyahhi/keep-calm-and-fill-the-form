@@ -193,7 +193,7 @@ export default function Home() {
       link.click();
       link.remove();
       URL.revokeObjectURL(downloadUrl);
-      setStatus("PDF filled. Download should start shortly.");
+      setStatus(null);
     } catch (error) {
       console.error(error);
       setStatus("Unable to fill the PDF.");
