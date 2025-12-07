@@ -258,8 +258,12 @@ export async function POST(request: NextRequest) {
       }
 
       if (!targetName) {
-        if (field.bbox) {
-          drawValueAtBBox(pdfDoc, field as DetectedField, value);
+        const bboxValue =
+          typeof (field as Partial<DetectedField>).bbox === "object"
+            ? (field as Partial<DetectedField>).bbox
+            : undefined;
+        if (bboxValue) {
+          drawValueAtBBox(pdfDoc, { ...(field as DetectedField), bbox: bboxValue }, value);
         } else {
           console.warn(
             `No matching PDF field for "${field.name}". Available: ${availableFieldNames.join(", ")}`,
