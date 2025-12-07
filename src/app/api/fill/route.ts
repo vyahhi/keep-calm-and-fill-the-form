@@ -247,13 +247,14 @@ export async function POST(request: NextRequest) {
       );
       const value = payload.values[field.name];
       if (value === undefined || value === null) continue;
-      let targetName = resolvedName;
+      let targetName: string | null = resolvedName ?? null;
 
       // Type-aware fallback: pick first unused field of expected kind.
       if (!targetName && desiredKinds.length) {
-        targetName = availableFieldNames.find(
+        const fallback = availableFieldNames.find(
           (name) => !used.has(name) && desiredKinds.includes(fieldKinds.get(name) ?? "unknown"),
         );
+        if (fallback) targetName = fallback;
       }
 
       if (!targetName) {
