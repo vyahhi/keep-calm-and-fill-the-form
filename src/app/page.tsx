@@ -296,9 +296,7 @@ export default function Home() {
           <div className={styles.heroBlock}>
             <p className={styles.tagline}>Upload any form and we’ll help you fill it</p>
             <h1>Start by uploading your form</h1>
-            <p className={styles.subhead}>
-              Drop a PDF or image and we’ll auto-detect the fields so you can fill them in seconds.
-            </p>
+            <p className={styles.subhead}></p>
             <div className={styles.actions}>
               <label
                 className={styles.uploadButtonLarge}
