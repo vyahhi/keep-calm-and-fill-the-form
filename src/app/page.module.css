@@ -418,6 +418,7 @@
   font-weight: 800;
   letter-spacing: 2px;
   color: #f6fbff;
+  font-family: "Gill Sans", "Gill Sans MT", "Trebuchet MS", sans-serif;
 }
 
 .posterLineSmall {
@@ -425,4 +426,5 @@
   font-weight: 700;
   letter-spacing: 3px;
   color: #f6fbff;
+  font-family: "Gill Sans", "Gill Sans MT", "Trebuchet MS", sans-serif;
 }
