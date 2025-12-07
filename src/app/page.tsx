@@ -299,8 +299,10 @@ export default function Home() {
         <div className={styles.stepOneCenter}>
           <div className={styles.heroBlock}>
             <p className={styles.tagline}>Upload any form file and we’ll help you fill it</p>
-            <h1>Upload to start</h1>
-            <p className={styles.subhead}>{heroDescription}</p>
+            <h1>Start by uploading your form</h1>
+            <p className={styles.subhead}>
+              Drop a PDF or image and we’ll auto-detect the fields so you can fill them in seconds.
+            </p>
             <div className={styles.actions}>
               <label className={styles.uploadButtonLarge}>
                 <input
@@ -308,7 +310,7 @@ export default function Home() {
                   accept="application/pdf,image/*"
                   onChange={handleFileChange}
                 />
-                Upload PDF or image
+                Choose PDF or image
               </label>
             </div>
             {status && <p className={styles.status}>{status}</p>}
