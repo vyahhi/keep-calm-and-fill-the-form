@@ -333,6 +333,16 @@ export default function Home() {
             <h1>Fill any PDF or form image instantly</h1>
             <p className={styles.subhead}>{heroDescription}</p>
           </div>
+          <div className={styles.actions}>
+            <button
+              type="button"
+              className={styles.ghostButton}
+              onClick={resetAll}
+              disabled={detecting || filling}
+            >
+              Home
+            </button>
+          </div>
         </header>
 
         <main className={styles.layout}>
@@ -383,14 +393,6 @@ export default function Home() {
             )}
 
             <div className={styles.footerActions}>
-              <button
-                type="button"
-                className={styles.ghostButton}
-                onClick={resetAll}
-                disabled={detecting || filling}
-              >
-                Upload new form
-              </button>
               {status && status.trim() ? <p className={styles.status}>{status}</p> : null}
             </div>
           </section>
