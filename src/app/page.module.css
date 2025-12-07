@@ -368,12 +368,12 @@
   border: 1.5px dashed rgba(255, 255, 255, 0.35);
   background: rgba(255, 255, 255, 0.02);
   border-radius: 16px;
-  padding: 32px 28px;
+  padding: 40px 48px;
   display: flex;
   align-items: center;
   justify-content: center;
-  min-width: 320px;
-  min-height: 140px;
+  min-width: 520px;
+  min-height: 160px;
   cursor: pointer;
   transition: border-color 0.2s ease, background 0.2s ease, transform 0.2s ease;
 }
