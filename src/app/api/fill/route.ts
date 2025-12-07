@@ -168,17 +168,15 @@ function drawValueAtBBox(
     ? Math.max(0, Math.min(1, field.bbox.x)) * pageWidth
     : Math.max(0, Math.min(pageWidth - width, field.bbox.x));
 
-  const yFromTop = isNormalized
+  const yTop = isNormalized
     ? Math.max(0, Math.min(1, field.bbox.y)) * pageHeight
     : Math.max(0, Math.min(pageHeight, field.bbox.y));
 
-  const padding = Math.min(6, height * 0.25);
-  const y = Math.min(
-    pageHeight - padding,
-    Math.max(padding, pageHeight - yFromTop - height + padding),
-  );
+  const padding = Math.min(6, height * 0.2);
+  // Treat bbox.y as from top-left; convert to PDF bottom-origin
+  const y = Math.max(2, Math.min(pageHeight - 2, pageHeight - (yTop + height) + padding));
 
-  const fontSize = Math.min(16, Math.max(9, height * 0.6));
+  const fontSize = Math.min(16, Math.max(9, height * 0.55));
   const text =
     typeof value === "boolean" ? (value ? "Yes" : "No") : String(value);
 
