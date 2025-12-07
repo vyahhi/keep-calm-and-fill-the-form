@@ -32,6 +32,7 @@ export default function Home() {
   const [detecting, setDetecting] = useState(false);
   const [filling, setFilling] = useState(false);
   const [status, setStatus] = useState<string | null>(null);
+  const showStep2 = fields.length > 0;
 
   useEffect(() => {
     return () => {
@@ -284,6 +285,83 @@ export default function Home() {
     if (!hasForm) return "Find fields to turn this flat file into a quick web form.";
     return "Review detected fields, fill them out, and download an overlaid PDF.";
   }, [file, hasForm]);
+
+  if (!showStep2) {
+    return (
+      <div className={styles.page}>
+        <div className={styles.container}>
+          <header className={styles.header}>
+            <div className={styles.headerCopy}>
+              <div className={styles.stepLabel}>Step 1 · Upload & auto-detect</div>
+              <h1>Image/PDF to form overlay</h1>
+              <p className={styles.subhead}>{heroDescription}</p>
+            </div>
+            <div className={styles.actions}>
+              <label className={styles.uploadButton}>
+                <input
+                  type="file"
+                  accept="application/pdf,image/*"
+                  onChange={handleFileChange}
+                />
+                {file ? "Replace file" : "Upload PDF or image"}
+              </label>
+              <button
+                className={styles.secondaryButton}
+                onClick={detectFields}
+                disabled={!file || detecting}
+              >
+                {detecting ? "Finding…" : "Re-run detection"}
+              </button>
+            </div>
+          </header>
+
+          <div className={styles.stepOneBody}>
+            <div className={styles.stepCard}>
+              <p className={styles.stepLabel}>Upload & detect</p>
+              <p className={styles.statusLarge}>
+                {status ||
+                  (file
+                    ? detecting
+                      ? "Detecting fields…"
+                      : "Ready to detect."
+                    : "Drop a PDF or image to get started.")}
+              </p>
+              {file ? (
+                <button
+                  className={styles.primaryButton}
+                  disabled={detecting}
+                  onClick={detectFields}
+                >
+                  {detecting ? "Finding…" : "Detect fields"}
+                </button>
+              ) : null}
+            </div>
+
+            <div className={styles.stepPreview}>
+              <div className={styles.panelHeader}>
+                <div>
+                  <div className={styles.stepLabel}>Preview</div>
+                  <h2>File preview</h2>
+                </div>
+                {pdfUrl ? <span className={styles.badge}>Ready</span> : null}
+              </div>
+              {pdfUrl ? (
+                <iframe
+                  title="PDF preview"
+                  src={pdfUrl}
+                  className={styles.previewFrame}
+                />
+              ) : (
+                <div className={styles.previewPlaceholder}>
+                  <p>Your PDF/image will preview here.</p>
+                </div>
+              )}
+            </div>
+          </div>
+        </div>
+      </div>
+    );
+  }
 
   return (
     <div className={styles.page}>
