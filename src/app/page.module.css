@@ -414,7 +414,7 @@
 }
 
 .posterLine {
-  font-size: 42px;
+  font-size: 48px;
   font-weight: 700;
   letter-spacing: 2px;
   color: #f6fbff;
@@ -422,7 +422,7 @@
 }
 
 .posterLineSmall {
-  font-size: 24px;
+  font-size: 18px;
   font-weight: 700;
   letter-spacing: 3px;
   color: #f6fbff;
