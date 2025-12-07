@@ -233,10 +233,11 @@ export async function POST(request: NextRequest) {
 
     for (const field of fieldsToFill) {
       if (!field.name) continue;
+      const fieldType = (field as { type?: string }).type;
       const desiredKinds: PdfFieldKind[] = [];
-      if (field.type === "checkbox") desiredKinds.push("checkbox");
-      if (field.type === "radio") desiredKinds.push("radio");
-      if (field.type === "select") desiredKinds.push("dropdown", "optionlist");
+      if (fieldType === "checkbox") desiredKinds.push("checkbox");
+      if (fieldType === "radio") desiredKinds.push("radio");
+      if (fieldType === "select") desiredKinds.push("dropdown", "optionlist");
       const candidates = availableFieldNames.filter((n) => !used.has(n));
       const resolvedName = resolveFieldName(
         field.name,
