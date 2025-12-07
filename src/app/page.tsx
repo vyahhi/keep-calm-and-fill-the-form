@@ -333,16 +333,6 @@ export default function Home() {
             <h1>Fill any PDF or form image instantly</h1>
             <p className={styles.subhead}>{heroDescription}</p>
           </div>
-          <div className={styles.actions}>
-            <label className={styles.uploadButton}>
-              <input
-                type="file"
-                accept="application/pdf,image/*"
-                onChange={handleFileChange}
-              />
-              Upload PDF or image
-            </label>
-          </div>
         </header>
 
         <main className={styles.layout}>
