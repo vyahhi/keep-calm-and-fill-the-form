@@ -405,23 +405,23 @@
   display: flex;
   flex-direction: column;
   align-items: center;
-  gap: 8px;
+  gap: 6px;
 }
 
 .crown {
-  font-size: 32px;
+  font-size: 40px;
 }
 
 .posterLine {
-  font-size: 32px;
+  font-size: 42px;
   font-weight: 800;
-  letter-spacing: 1px;
+  letter-spacing: 2px;
   color: #f6fbff;
 }
 
 .posterLineSmall {
-  font-size: 18px;
+  font-size: 24px;
   font-weight: 700;
-  letter-spacing: 2px;
+  letter-spacing: 3px;
   color: #f6fbff;
 }
