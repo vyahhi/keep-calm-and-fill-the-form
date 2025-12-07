@@ -33,6 +33,13 @@ export default function Home() {
   const [filling, setFilling] = useState(false);
   const [status, setStatus] = useState<string | null>(null);
   const showStep2 = fields.length > 0;
+  const previewUrl = useMemo(
+    () =>
+      pdfUrl
+        ? `${pdfUrl}#toolbar=0&navpanes=0&scrollbar=0&view=FitH`
+        : undefined,
+    [pdfUrl],
+  );
 
   useEffect(() => {
     return () => {
@@ -395,17 +402,17 @@ export default function Home() {
           <section className={styles.previewPanel}>
             <div className={styles.panelHeader}>
               <h2>File preview</h2>
-              {pdfUrl ? <span className={styles.badge}>Preview</span> : null}
-            </div>
-            {pdfUrl ? (
-              <iframe
-                title="PDF preview"
-                src={pdfUrl}
-                className={styles.previewFrame}
-              />
-            ) : (
-              <div className={styles.previewPlaceholder}>
-                <p>Your PDF preview will appear here.</p>
+                  {previewUrl ? <span className={styles.badge}>Preview</span> : null}
+                </div>
+                {previewUrl ? (
+                  <iframe
+                    title="PDF preview"
+                    src={previewUrl}
+                    className={styles.previewFrame}
+                  />
+                ) : (
+                  <div className={styles.previewPlaceholder}>
+                    <p>Your PDF preview will appear here.</p>
               </div>
             )}
           </section>
