@@ -1,36 +1,28 @@
-This is a [Next.js](https://nextjs.org) project bootstrapped with [`create-next-app`](https://nextjs.org/docs/app/api-reference/cli/create-next-app).
+# PDF form → HTML form with Gemini
 
-## Getting Started
+Simple Next.js app where you can upload any PDF, let Gemini 2.5 Flash detect fillable fields, render them as an HTML form, and download a filled PDF.
 
-First, run the development server:
+## Setup
 
-```bash
-npm run dev
-# or
-yarn dev
-# or
-pnpm dev
-# or
-bun dev
-```
+1. Install dependencies:
+   ```bash
+   npm install
+   ```
+2. Create a `.env.local` with your Gemini key:
+   ```bash
+   GEMINI_API_KEY=your_api_key_here
+   ```
+3. Run the dev server:
+   ```bash
+   npm run dev
+   ```
+4. Open [http://localhost:3000](http://localhost:3000)
 
-Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
+## Flow
 
-You can start editing the page by modifying `app/page.tsx`. The page auto-updates as you edit the file.
-
-This project uses [`next/font`](https://nextjs.org/docs/app/building-your-application/optimizing/fonts) to automatically optimize and load [Geist](https://vercel.com/font), a new font family for Vercel.
-
-## Learn More
-
-To learn more about Next.js, take a look at the following resources:
-
-- [Next.js Documentation](https://nextjs.org/docs) - learn about Next.js features and API.
-- [Learn Next.js](https://nextjs.org/learn) - an interactive Next.js tutorial.
-
-You can check out [the Next.js GitHub repository](https://github.com/vercel/next.js) - your feedback and contributions are welcome!
-
-## Deploy on Vercel
-
-The easiest way to deploy your Next.js app is to use the [Vercel Platform](https://vercel.com/new?utm_medium=default-template&filter=next.js&utm_source=create-next-app&utm_campaign=create-next-app-readme) from the creators of Next.js.
-
-Check out our [Next.js deployment documentation](https://nextjs.org/docs/app/building-your-application/deploying) for more details.
+1. Upload a PDF or image on the left panel (images are auto-converted to PDF).
+2. Click “Detect fields” to call the Gemini 2.5 Flash Lite API.
+3. A web form is generated on the left; the PDF preview stays on the right.
+4. Fill the form and submit to receive a downloadable filled PDF.
+   - If the PDF is flat/image-like, Gemini’s bounding boxes are used to draw your answers back onto the PDF.
+   - If the PDF already has native form fields, the app will tell you to fill it directly in your PDF reader (native forms are intentionally not handled here).
