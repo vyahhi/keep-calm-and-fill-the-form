@@ -284,7 +284,7 @@ export default function Home() {
   };
 
   useMemo(() => {
-    if (!file) return "Upload any form file and we’ll help you fill it.";
+    if (!file) return "Upload any form and we’ll help you fill it.";
     if (!hasForm) return "Finding fields to turn this file into a quick web form.";
     return "Review detected fields, fill them out, and download an overlaid PDF.";
   }, [file, hasForm]);
@@ -294,7 +294,7 @@ export default function Home() {
       <div className={styles.container}>
         <div className={styles.stepOneCenter}>
           <div className={styles.heroBlock}>
-            <p className={styles.tagline}>Upload any form file and we’ll help you fill it</p>
+            <p className={styles.tagline}>Upload any form and we’ll help you fill it</p>
             <h1>Start by uploading your form</h1>
             <p className={styles.subhead}>
               Drop a PDF or image and we’ll auto-detect the fields so you can fill them in seconds.
