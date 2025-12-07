@@ -342,9 +342,6 @@ export default function Home() {
                 <h2>Form builder</h2>
               </div>
               <div className={styles.badgeRow}>
-                <span className={styles.badge}>
-                  {fields.length ? `${fields.length} field(s)` : "Awaiting detection"}
-                </span>
                 <button
                   className={styles.secondaryButtonSmall}
                   onClick={detectFields}
