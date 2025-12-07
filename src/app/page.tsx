@@ -321,7 +321,15 @@ export default function Home() {
     <div className={styles.page}>
       <div className={styles.containerBare}>
         <div className={styles.centerStack}>
-          <h1 className={styles.tagline}>Keep Calm and Fill the Form</h1>
+          <div className={styles.poster}>
+            <div className={styles.crown}>👑</div>
+            <div className={styles.posterLine}>KEEP</div>
+            <div className={styles.posterLine}>CALM</div>
+            <div className={styles.posterLineSmall}>AND</div>
+            <div className={styles.posterLine}>FILL THE</div>
+            <div className={styles.posterLine}>FORM</div>
+          </div>
+          <p className={styles.subhead}>Upload any form and we’ll help you fill it.</p>
           <label
             className={styles.dropZone}
             aria-disabled={detecting}
