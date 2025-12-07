@@ -46,6 +46,8 @@
   gap: 24px;
   padding-top: 8px;
   padding-bottom: 16px;
+  padding-left: 24px;
+  padding-right: 24px;
   border-bottom: 1px solid rgba(255, 255, 255, 0.06);
 }
 
@@ -133,8 +135,11 @@
 
 .layout {
   display: grid;
-  grid-template-columns: 1.1fr 1fr;
-  gap: 24px;
+  grid-template-columns: 1fr;
+  grid-template-rows: 1fr;
+  grid-auto-flow: column;
+  align-items: stretch;
+  gap: 0;
   padding: 24px 0 0;
 }
 
@@ -256,6 +261,18 @@
   flex: 1;
   display: grid;
   place-items: center;
+}
+
+.splitter {
+  width: 10px;
+  cursor: col-resize;
+  background: linear-gradient(
+    180deg,
+    rgba(255, 255, 255, 0.06),
+    rgba(255, 255, 255, 0.02)
+  );
+  border-left: 1px solid rgba(255, 255, 255, 0.05);
+  border-right: 1px solid rgba(255, 255, 255, 0.05);
 }
 
 @media (max-width: 960px) {

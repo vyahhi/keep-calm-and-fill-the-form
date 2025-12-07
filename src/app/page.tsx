@@ -33,6 +33,7 @@ export default function Home() {
   const [filling, setFilling] = useState(false);
   const [status, setStatus] = useState<string | null>(null);
   const [formTitle, setFormTitle] = useState("Form");
+  const [split, setSplit] = useState(55); // percentage width for form panel
   const showStep2 = fields.length > 0;
   const previewUrl = useMemo(() => pdfUrl || undefined, [pdfUrl]);
 
@@ -289,6 +290,15 @@ export default function Home() {
     return "Review detected fields, fill them out, and download an overlaid PDF.";
   }, [file, hasForm]);
 
+  const onDrag = (e: React.MouseEvent<HTMLDivElement>) => {
+    const container = e.currentTarget.parentElement;
+    if (!container) return;
+    const rect = container.getBoundingClientRect();
+    const x = e.clientX - rect.left;
+    const percent = Math.min(75, Math.max(25, (x / rect.width) * 100));
+    setSplit(percent);
+  };
+
   const StepOne = () => (
     <div className={styles.page}>
       <div className={styles.containerBare}>
@@ -337,7 +347,10 @@ export default function Home() {
         </header>
 
         <main className={styles.layout}>
-          <section className={styles.formPanel}>
+          <section
+            className={styles.formPanel}
+            style={{ width: `${split}%`, minWidth: "40%" }}
+          >
             <div className={styles.panelHeader}>
               <div>
                 <h2>{formTitle}</h2>
@@ -388,7 +401,23 @@ export default function Home() {
             </div>
           </section>
 
-          <section className={styles.previewPanel}>
+          <div
+            className={styles.splitter}
+            onMouseDown={(e) => {
+              e.preventDefault();
+              const handleMove = (ev: MouseEvent) => onDrag(ev as unknown as React.MouseEvent<HTMLDivElement>);
+              const handleUp = () => {
+                window.removeEventListener("mousemove", handleMove);
+                window.removeEventListener("mouseup", handleUp);
+              };
+              window.addEventListener("mousemove", handleMove);
+              window.addEventListener("mouseup", handleUp);
+            }}
+          />
+          <section
+            className={styles.previewPanel}
+            style={{ width: `${100 - split}%`, minWidth: "35%" }}
+          >
             <div className={styles.panelHeader}>
               <h2>Uploaded file</h2>
             </div>
