@@ -102,10 +102,10 @@ export default function Home() {
     }
   };
 
-  const detectFields = async () => {
+  const detectFields = async (suppressStatus = false) => {
     if (!file || detecting) return;
     setDetecting(true);
-    setStatus("Detecting fillable fields…");
+    if (!suppressStatus) setStatus("Detecting fillable fields…");
     const formData = new FormData();
     formData.append("file", file);
 
@@ -349,7 +349,7 @@ export default function Home() {
                 </span>
                 <button
                   className={styles.secondaryButtonSmall}
-                  onClick={detectFields}
+                  onClick={() => detectFields(true)}
                   disabled={!file || detecting}
                 >
                   {detecting ? "Finding…" : "Re-run detection"}
