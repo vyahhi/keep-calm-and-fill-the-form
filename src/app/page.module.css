@@ -48,7 +48,6 @@
   padding-bottom: 16px;
   padding-left: 24px;
   padding-right: 24px;
-  border-bottom: 1px solid rgba(255, 255, 255, 0.06);
 }
 
 .headerCopy h1 {
@@ -143,7 +142,7 @@
 .formPanel,
 .previewPanel {
   background: transparent;
-  border: 1px solid rgba(255, 255, 255, 0.04);
+  border: none;
   border-radius: 14px;
   padding: 16px;
   min-height: 520px;
