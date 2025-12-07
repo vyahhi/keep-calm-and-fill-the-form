@@ -298,7 +298,7 @@ export default function Home() {
       <div className={styles.container}>
         <div className={styles.stepOneCenter}>
           <div className={styles.heroBlock}>
-            <p className={styles.tagline}>Turn paper-like forms into fillable PDFs</p>
+            <p className={styles.tagline}>Turn paper-like forms into fillable experiences</p>
             <h1>Upload to start</h1>
             <p className={styles.subhead}>{heroDescription}</p>
             <div className={styles.actions}>
