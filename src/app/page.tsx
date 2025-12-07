@@ -283,9 +283,8 @@ export default function Home() {
     );
   };
 
-  const heroDescription = useMemo(() => {
-    if (!file)
-      return "Upload any form file and we’ll help you fill it.";
+  useMemo(() => {
+    if (!file) return "Upload any form file and we’ll help you fill it.";
     if (!hasForm) return "Finding fields to turn this file into a quick web form.";
     return "Review detected fields, fill them out, and download an overlaid PDF.";
   }, [file, hasForm]);
@@ -331,16 +330,17 @@ export default function Home() {
           <>
         <header className={styles.header}>
           <div className={styles.headerCopy}>
+            <h1>Review detected fields, fill them out, and download an overlaid PDF</h1>
+          </div>
+          <div className={styles.actions}>
             <button
               type="button"
               className={styles.ghostButton}
               onClick={resetAll}
               disabled={detecting || filling}
             >
-              Upload file
+              Upload new form
             </button>
-            <h1>Fill</h1>
-            <p className={styles.subhead}>{heroDescription}</p>
           </div>
         </header>
 
