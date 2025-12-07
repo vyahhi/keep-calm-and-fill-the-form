@@ -132,11 +132,7 @@ export default function Home() {
           field.type === "checkbox" ? false : field.options?.[0] ?? "";
       });
       setValues(initialValues);
-      setStatus(
-        data.fields.length > 0
-          ? `Detected ${data.fields.length} field(s)`
-          : "No fields detected",
-      );
+      setStatus(data.fields.length > 0 ? "" : "No fields detected");
     } catch (error) {
       console.error(error);
       const message =
@@ -405,7 +401,7 @@ export default function Home() {
               >
                 Upload new form
               </button>
-              {status && <p className={styles.status}>{status}</p>}
+              {status && status.trim() ? <p className={styles.status}>{status}</p> : null}
             </div>
           </section>
 
