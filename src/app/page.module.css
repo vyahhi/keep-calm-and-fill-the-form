@@ -27,6 +27,7 @@
   justify-content: center;
   gap: 16px;
   text-align: center;
+  transform: translateY(-12px);
 }
 
 .container {
