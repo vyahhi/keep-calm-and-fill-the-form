@@ -304,13 +304,18 @@ export default function Home() {
               Drop a PDF or image and we’ll auto-detect the fields so you can fill them in seconds.
             </p>
             <div className={styles.actions}>
-              <label className={styles.uploadButtonLarge}>
+              <label
+                className={styles.uploadButtonLarge}
+                aria-disabled={detecting}
+                style={{ pointerEvents: detecting ? "none" : "auto", opacity: detecting ? 0.6 : 1 }}
+              >
                 <input
                   type="file"
                   accept="application/pdf,image/*"
                   onChange={handleFileChange}
+                  disabled={detecting}
                 />
-                Choose PDF or image
+                {detecting ? "Detecting…" : "Choose PDF or image"}
               </label>
             </div>
             {status && <p className={styles.status}>{status}</p>}
