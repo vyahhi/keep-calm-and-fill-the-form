@@ -395,7 +395,7 @@ export default function Home() {
               onClick={resetAll}
               disabled={detecting || filling}
             >
-              Upload new form
+              Choose new form
             </button>
           </div>
         </header>
