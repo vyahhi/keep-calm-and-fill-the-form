@@ -72,7 +72,9 @@ export default function Home() {
     const page = pdfDoc.addPage([width, height]);
     page.drawImage(embedded, { x: 0, y: 0, width, height });
     const pdfBytes = await pdfDoc.save();
-    const blob = new Blob([pdfBytes], { type: "application/pdf" });
+    const copy = new Uint8Array(pdfBytes.length);
+    copy.set(pdfBytes);
+    const blob = new Blob([copy], { type: "application/pdf" });
     const pdfFile = new File(
       [blob],
       imageFile.name.replace(/\.[^.]+$/, "") + ".pdf",
@@ -131,7 +133,7 @@ export default function Home() {
           field.type === "checkbox" ? false : field.options?.[0] ?? "";
       });
       setValues(initialValues);
-      setStatus(data.fields.length > 0 ? null : "No fields detected");
+      setStatus(data.fields && data.fields.length > 0 ? null : "No fields detected");
       if (data.title && data.title.trim()) {
         setFormTitle(data.title.trim());
       } else {
