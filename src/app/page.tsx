@@ -339,7 +339,7 @@ export default function Home() {
           <section className={styles.formPanel}>
             <div className={styles.panelHeader}>
               <div>
-                <h2>Form builder</h2>
+                <h2>Form</h2>
               </div>
               <div className={styles.badgeRow}>
                 <button
