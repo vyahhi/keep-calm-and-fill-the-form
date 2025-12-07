@@ -430,7 +430,7 @@ export default function Home() {
                     className={styles.primaryButton}
                     disabled={filling}
                   >
-                    {filling ? "Overlaying…" : "Apply answers & download"}
+                    {filling ? "Overlaying…" : "Apply answers & download an overlaid PDF"}
                   </button>
                 </div>
               </form>
