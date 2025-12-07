@@ -134,13 +134,10 @@
 }
 
 .layout {
-  display: grid;
-  grid-template-columns: 1fr;
-  grid-template-rows: 1fr;
-  grid-auto-flow: column;
+  display: flex;
   align-items: stretch;
   gap: 0;
-  padding: 24px 0 0;
+  padding: 24px;
 }
 
 .formPanel,

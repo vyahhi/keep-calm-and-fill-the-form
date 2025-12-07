@@ -1,6 +1,6 @@
 "use client";
 
-import { ChangeEvent, FormEvent, useEffect, useMemo, useState } from "react";
+import { ChangeEvent, FormEvent, useEffect, useMemo, useRef, useState } from "react";
 import { PDFDocument } from "pdf-lib";
 import styles from "./page.module.css";
 import { DetectedField } from "@/lib/types";
@@ -35,6 +35,8 @@ export default function Home() {
   const [formTitle, setFormTitle] = useState("Form");
   const [split, setSplit] = useState(55); // percentage width for form panel
   const showStep2 = fields.length > 0;
+  const layoutRef = useRef<HTMLDivElement | null>(null);
+  const draggingRef = useRef(false);
   const previewUrl = useMemo(() => pdfUrl || undefined, [pdfUrl]);
 
   useEffect(() => {
@@ -290,14 +292,30 @@ export default function Home() {
     return "Review detected fields, fill them out, and download an overlaid PDF.";
   }, [file, hasForm]);
 
-  const onDrag = (e: React.MouseEvent<HTMLDivElement>) => {
-    const container = e.currentTarget.parentElement;
+  const onDrag = (clientX: number) => {
+    const container = layoutRef.current;
     if (!container) return;
     const rect = container.getBoundingClientRect();
-    const x = e.clientX - rect.left;
+    const x = clientX - rect.left;
     const percent = Math.min(75, Math.max(25, (x / rect.width) * 100));
     setSplit(percent);
   };
+
+  useEffect(() => {
+    const handleMove = (ev: MouseEvent) => {
+      if (!draggingRef.current) return;
+      onDrag(ev.clientX);
+    };
+    const handleUp = () => {
+      draggingRef.current = false;
+    };
+    window.addEventListener("mousemove", handleMove);
+    window.addEventListener("mouseup", handleUp);
+    return () => {
+      window.removeEventListener("mousemove", handleMove);
+      window.removeEventListener("mouseup", handleUp);
+    };
+  }, []);
 
   const StepOne = () => (
     <div className={styles.page}>
@@ -368,10 +386,10 @@ export default function Home() {
           </div>
         </header>
 
-        <main className={styles.layout}>
+        <main className={styles.layout} ref={layoutRef}>
           <section
             className={styles.formPanel}
-            style={{ width: `${split}%`, minWidth: "40%" }}
+            style={{ flexBasis: `${split}%`, minWidth: "42%" }}
           >
             <div className={styles.panelHeader}>
               <div>
@@ -427,18 +445,13 @@ export default function Home() {
             className={styles.splitter}
             onMouseDown={(e) => {
               e.preventDefault();
-              const handleMove = (ev: MouseEvent) => onDrag(ev as unknown as React.MouseEvent<HTMLDivElement>);
-              const handleUp = () => {
-                window.removeEventListener("mousemove", handleMove);
-                window.removeEventListener("mouseup", handleUp);
-              };
-              window.addEventListener("mousemove", handleMove);
-              window.addEventListener("mouseup", handleUp);
+              draggingRef.current = true;
+              onDrag(e.clientX);
             }}
           />
           <section
             className={styles.previewPanel}
-            style={{ width: `${100 - split}%`, minWidth: "35%" }}
+            style={{ flexBasis: `${100 - split}%`, minWidth: "35%" }}
           >
             <div className={styles.panelHeader}>
               <h2>Uploaded file</h2>
