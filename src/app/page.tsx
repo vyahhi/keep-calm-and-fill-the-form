@@ -294,8 +294,7 @@ export default function Home() {
       <div className={styles.container}>
         <div className={styles.stepOneCenter}>
           <div className={styles.heroBlock}>
-            <p className={styles.tagline}>Upload any form and we’ll help you fill it</p>
-            <h1></h1>
+            <h1 className={styles.tagline}>Upload any form and we’ll help you fill it</h1>
             <div className={styles.actions}>
               <label
                 className={styles.uploadButtonLarge}

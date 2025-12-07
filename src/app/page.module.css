@@ -296,10 +296,11 @@
 }
 
 .tagline {
-  font-size: 12px;
-  letter-spacing: 0.1em;
-  text-transform: uppercase;
-  color: #9de6ff;
+  font-size: 32px;
+  line-height: 1.2;
+  color: #f6fbff;
+  letter-spacing: -0.4px;
+  text-transform: none;
 }
 
 .uploadButtonLarge {
