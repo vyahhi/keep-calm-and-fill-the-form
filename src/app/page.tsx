@@ -336,9 +336,9 @@ export default function Home() {
               onClick={resetAll}
               disabled={detecting || filling}
             >
-              Home
+              Upload file
             </button>
-            <h1>Upload any form file and we’ll help you fill it</h1>
+            <h1>Fill</h1>
             <p className={styles.subhead}>{heroDescription}</p>
           </div>
         </header>
