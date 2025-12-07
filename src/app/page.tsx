@@ -288,7 +288,7 @@ export default function Home() {
 
   const heroDescription = useMemo(() => {
     if (!file)
-      return "Drop in any form file and we’ll auto-detect the fields for you.";
+      return "Upload any form file and we’ll help you fill it.";
     if (!hasForm) return "Finding fields to turn this file into a quick web form.";
     return "Review detected fields, fill them out, and download an overlaid PDF.";
   }, [file, hasForm]);
