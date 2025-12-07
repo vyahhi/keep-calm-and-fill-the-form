@@ -365,7 +365,7 @@ export default function Home() {
             </div>
           </label>
           {!detecting ? (
-            <p className={styles.subhead}>Upload any form and we’ll help you fill it.</p>
+            <p className={styles.subhead}>Upload any form and we’ll help you fill it</p>
           ) : null}
           {status && !detecting ? <p className={styles.status}>{status}</p> : null}
         </div>
