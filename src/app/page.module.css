@@ -1,8 +1,6 @@
 .page {
   min-height: 100vh;
-  background: radial-gradient(circle at 20% 20%, #eef3ff, transparent 30%),
-    radial-gradient(circle at 80% 0%, #fff3e3, transparent 30%),
-    #0f1729;
+  background: #0f1729;
   color: #dfe7ff;
   display: flex;
   justify-content: center;
