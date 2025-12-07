@@ -298,7 +298,7 @@ export default function Home() {
       <div className={styles.container}>
         <div className={styles.stepOneCenter}>
           <div className={styles.heroBlock}>
-            <p className={styles.tagline}>Image/PDF to form overlay</p>
+            <p className={styles.tagline}>Turn paper-like forms into fillable PDFs</p>
             <h1>Upload to start</h1>
             <p className={styles.subhead}>{heroDescription}</p>
             <div className={styles.actions}>
@@ -327,7 +327,7 @@ export default function Home() {
           <>
         <header className={styles.header}>
           <div className={styles.headerCopy}>
-            <h1>Image/PDF to form overlay</h1>
+            <h1>Fill any PDF or form image instantly</h1>
             <p className={styles.subhead}>{heroDescription}</p>
           </div>
           <div className={styles.actions}>
