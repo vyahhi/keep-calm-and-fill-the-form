@@ -330,10 +330,6 @@ export default function Home() {
           <>
         <header className={styles.header}>
           <div className={styles.headerCopy}>
-            <h1>Upload any form file and we’ll help you fill it</h1>
-            <p className={styles.subhead}>{heroDescription}</p>
-          </div>
-          <div className={styles.actions}>
             <button
               type="button"
               className={styles.ghostButton}
@@ -342,6 +338,8 @@ export default function Home() {
             >
               Home
             </button>
+            <h1>Upload any form file and we’ll help you fill it</h1>
+            <p className={styles.subhead}>{heroDescription}</p>
           </div>
         </header>
 
