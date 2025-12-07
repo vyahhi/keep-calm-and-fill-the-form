@@ -32,10 +32,10 @@
 .container {
   width: 100%;
   min-height: 100vh;
-  background: #0d1320;
-  border-left: 1px solid rgba(255, 255, 255, 0.06);
-  border-right: 1px solid rgba(255, 255, 255, 0.06);
-  box-shadow: 0 30px 120px rgba(0, 0, 0, 0.35);
+  background: transparent;
+  border-left: none;
+  border-right: none;
+  box-shadow: none;
   overflow: hidden;
   padding: 0;
 }
