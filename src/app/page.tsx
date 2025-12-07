@@ -321,7 +321,7 @@ export default function Home() {
     <div className={styles.page}>
       <div className={styles.containerBare}>
         <div className={styles.centerStack}>
-          <h1 className={styles.tagline}>Upload any form and we’ll help you fill it</h1>
+          <h1 className={styles.tagline}>Keep Calm and Fill the Form</h1>
           <label
             className={styles.dropZone}
             aria-disabled={detecting}

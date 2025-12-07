@@ -13,7 +13,7 @@ const geistMono = Geist_Mono({
 });
 
 export const metadata: Metadata = {
-  title: "PDF to Form Filler",
+  title: "Keep Calm and Fill the Form",
   description: "Upload any form and fill it instantly",
 };
 
