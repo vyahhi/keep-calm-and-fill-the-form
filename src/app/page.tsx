@@ -197,6 +197,7 @@ export default function Home() {
       if (dir === "right") next.dx += delta;
       return { ...prev, [fieldName]: next };
     });
+    setPreviewLoading(true);
   };
 
   const scaleFieldFont = (fieldName: string, delta: number) => {
@@ -205,6 +206,7 @@ export default function Home() {
       const nextScale = Math.min(2, Math.max(0.5, current.fontScale + delta));
       return { ...prev, [fieldName]: { ...current, fontScale: nextScale } };
     });
+    setPreviewLoading(true);
   };
 
   const renderAdjustButtons = (field: DetectedField) => (
