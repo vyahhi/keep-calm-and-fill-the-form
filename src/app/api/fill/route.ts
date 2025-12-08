@@ -178,7 +178,7 @@ async function drawValueAtBBox(
 
   const fontScale = field.fontScale && field.fontScale > 0 ? field.fontScale : 1;
   const baseSize = height * 0.45 * fontScale;
-  const fontSize = Math.min(height, Math.max(6, baseSize));
+  const fontSize = Math.max(4, baseSize);
   const text =
     typeof value === "boolean" ? (value ? "Yes" : "No") : String(value);
 
