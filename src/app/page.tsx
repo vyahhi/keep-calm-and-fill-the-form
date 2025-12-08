@@ -296,9 +296,12 @@ export default function Home() {
           URL.revokeObjectURL(url);
           return;
         }
-        if (filledPreviewUrl) URL.revokeObjectURL(filledPreviewUrl);
+        const previousUrl = filledPreviewUrl;
         setFilledPreviewBase64(data.pdfBase64);
         setFilledPreviewUrl(url);
+        if (previousUrl) {
+          setTimeout(() => URL.revokeObjectURL(previousUrl), 500);
+        }
         setStatus((prev) => (prev && prev.includes("Unable") ? prev : null));
       } catch (error) {
         console.error("Preview generation error", error);
