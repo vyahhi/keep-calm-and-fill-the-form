@@ -612,8 +612,9 @@ export default function Home() {
                 className={styles.secondaryButtonSmall}
                 onClick={downloadFilled}
                 disabled={!file || previewLoading}
+                aria-busy={previewLoading}
               >
-                {previewLoading ? "Rendering…" : "Download⬇"}
+                Download⬇
               </button>
             </div>
             {filledPreviewUrl ? (
