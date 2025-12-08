@@ -1,28 +1,17 @@
-# PDF form → HTML form with Gemini
+# Keep Calm and Fill the Form
 
-Simple Next.js app where you can upload any PDF, let Gemini 2.5 Flash detect fillable fields, render them as an HTML form, and download a filled PDF.
+Upload any PDF/image form, auto-detect fields via Gemini, edit them, and download the overlaid PDF with live preview and per-field nudges.
 
-## Setup
-
-1. Install dependencies:
-   ```bash
-   npm install
+## Quick start
+1) `npm install`
+2) Add `.env.local`:
    ```
-2. Create a `.env.local` with your Gemini key:
-   ```bash
-   GEMINI_API_KEY=your_api_key_here
+   GEMINI_API_KEY=your_key
+   GEMINI_MODEL=gemini-2.5-flash-lite
    ```
-3. Run the dev server:
-   ```bash
-   npm run dev
-   ```
-4. Open [http://localhost:3000](http://localhost:3000)
+3) `npm run dev` then open http://localhost:3000
 
 ## Flow
-
-1. Upload a PDF or image on the left panel (images are auto-converted to PDF).
-2. Click “Detect fields” to call the Gemini 2.5 Flash Lite API.
-3. A web form is generated on the left; the PDF preview stays on the right.
-4. Fill the form and submit to receive a downloadable filled PDF.
-   - If the PDF is flat/image-like, Gemini’s bounding boxes are used to draw your answers back onto the PDF.
-   - If the PDF already has native form fields, the app will tell you to fill it directly in your PDF reader (native forms are intentionally not handled here).
+- Upload PDF/image (images auto-convert to PDF); native AcroForms are rejected with a message.
+- Fields are detected; adjust each field’s position/size with inline ↑ ← → ↓ + – controls.
+- Right panel shows the live filled preview; use “Download⬇” to save the overlaid PDF.
