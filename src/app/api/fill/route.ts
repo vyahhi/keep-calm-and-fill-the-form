@@ -1,5 +1,5 @@
 import { NextRequest, NextResponse } from "next/server";
-import { PDFDocument, rgb } from "pdf-lib";
+import { PDFDocument, StandardFonts, rgb } from "pdf-lib";
 import { DetectedField, FillPayload } from "@/lib/types";
 
 export const runtime = "nodejs";
@@ -138,7 +138,7 @@ async function applyValueToField(
   }
 }
 
-function drawValueAtBBox(
+async function drawValueAtBBox(
   pdfDoc: PDFDocument,
   field: DetectedField,
   value: string | boolean,
@@ -181,11 +181,39 @@ function drawValueAtBBox(
   const text =
     typeof value === "boolean" ? (value ? "Yes" : "No") : String(value);
 
-  page.drawText(text, {
-    x: Math.min(pageWidth - 4, Math.max(2, x + 2)),
-    y: Math.max(2, y),
-    size: fontSize,
-    color: rgb(0, 0, 0),
+  const font = await pdfDoc.embedFont(StandardFonts.Helvetica);
+  const maxWidth = width - 4;
+
+  const paragraphs = text.split(/\n+/);
+  const lines: string[] = [];
+
+  for (const paragraph of paragraphs) {
+    const words = paragraph.split(/\s+/);
+    let currentLine = "";
+    for (const word of words) {
+      const testLine = currentLine ? `${currentLine} ${word}` : word;
+      const testWidth = font.widthOfTextAtSize(testLine, fontSize);
+      if (testWidth > maxWidth && currentLine) {
+        lines.push(currentLine);
+        currentLine = word;
+      } else {
+        currentLine = testLine;
+      }
+    }
+    if (currentLine) lines.push(currentLine);
+  }
+
+  const maxLines = Math.max(1, Math.floor(height / (fontSize + 2)));
+  const yStart = y + height - fontSize - padding;
+  lines.slice(0, maxLines).forEach((line, idx) => {
+    const lineY = yStart - idx * (fontSize + 2);
+    page.drawText(line, {
+      x: Math.min(pageWidth - 4, Math.max(2, x + 2)),
+      y: Math.max(2, lineY),
+      size: fontSize,
+      font,
+      color: rgb(0, 0, 0),
+    });
   });
 }
 
