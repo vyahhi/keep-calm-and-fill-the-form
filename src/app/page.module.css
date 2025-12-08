@@ -233,7 +233,7 @@
 .nudgeGroup {
   display: grid;
   grid-template-columns: repeat(3, 28px);
-  grid-template-rows: repeat(3, 28px);
+  grid-template-rows: repeat(2, 28px);
   gap: 4px;
 }
 
