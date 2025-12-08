@@ -1,6 +1,6 @@
 "use client";
 
-import { ChangeEvent, FormEvent, useEffect, useMemo, useRef, useState } from "react";
+import { ChangeEvent, useEffect, useMemo, useRef, useState } from "react";
 import { PDFDocument } from "pdf-lib";
 import styles from "./page.module.css";
 import { DetectedField } from "@/lib/types";
@@ -38,6 +38,9 @@ export default function Home() {
   const layoutRef = useRef<HTMLDivElement | null>(null);
   const draggingRef = useRef(false);
   const [isDragging, setIsDragging] = useState(false);
+  const [filledPreviewUrl, setFilledPreviewUrl] = useState<string | null>(null);
+  const [filledPreviewBase64, setFilledPreviewBase64] = useState<string | null>(null);
+  const [previewLoading, setPreviewLoading] = useState(false);
   const previewUrl = useMemo(() => pdfUrl || undefined, [pdfUrl]);
 
   useEffect(() => {
@@ -58,6 +61,10 @@ export default function Home() {
     setDetecting(false);
     setFilling(false);
     setFormTitle("Form");
+    if (filledPreviewUrl) URL.revokeObjectURL(filledPreviewUrl);
+    setFilledPreviewUrl(null);
+    setFilledPreviewBase64(null);
+    setPreviewLoading(false);
   };
 
   const convertImageToPdf = async (imageFile: File) => {
@@ -159,35 +166,75 @@ export default function Home() {
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [file]);
 
-  const onSubmit = async (event: FormEvent) => {
-    event.preventDefault();
+  useEffect(() => {
+    if (!file || fields.length === 0) {
+      if (filledPreviewUrl) URL.revokeObjectURL(filledPreviewUrl);
+      setFilledPreviewUrl(null);
+      setFilledPreviewBase64(null);
+      return;
+    }
+
+    let active = true;
+    const timer = setTimeout(async () => {
+      setPreviewLoading(true);
+      try {
+        const base64 = arrayBufferToBase64(await file.arrayBuffer());
+        const res = await fetch("/api/fill", {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({ pdfBase64: base64, values, fields }),
+        });
+        const data = (await res.json()) as { pdfBase64?: string; error?: string };
+        if (!res.ok || !data.pdfBase64) {
+          if (active) setStatus(data.error || "Unable to render preview.");
+          return;
+        }
+        const filledBytes = base64ToUint8Array(data.pdfBase64);
+        const filledBlob = new Blob([filledBytes], { type: "application/pdf" });
+        const url = URL.createObjectURL(filledBlob);
+        if (!active) {
+          URL.revokeObjectURL(url);
+          return;
+        }
+        if (filledPreviewUrl) URL.revokeObjectURL(filledPreviewUrl);
+        setFilledPreviewBase64(data.pdfBase64);
+        setFilledPreviewUrl(url);
+        setStatus((prev) => (prev && prev.includes("Unable") ? prev : null));
+      } catch (error) {
+        console.error("Preview generation error", error);
+        if (active) setStatus("Unable to render preview.");
+      } finally {
+        if (active) setPreviewLoading(false);
+      }
+    }, 400);
+
+    return () => {
+      active = false;
+      clearTimeout(timer);
+    };
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [values, fields, file]);
+
+  const downloadFilled = async () => {
     if (!file) return;
-    setFilling(true);
-    setStatus("Filling PDF…");
     try {
-      const base64 = arrayBufferToBase64(await file.arrayBuffer());
-      const res = await fetch("/api/fill", {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({
-          pdfBase64: base64,
-          values,
-          fields,
-        }),
-      });
-      const data = (await res.json()) as { pdfBase64?: string; error?: string };
-      if (!res.ok) {
-        setStatus(data.error || "Fill failed");
-        return;
+      let base64 = filledPreviewBase64;
+      if (!base64) {
+        const pdfBase64 = arrayBufferToBase64(await file.arrayBuffer());
+        const res = await fetch("/api/fill", {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({ pdfBase64, values, fields }),
+        });
+        const data = (await res.json()) as { pdfBase64?: string; error?: string };
+        if (!res.ok || !data.pdfBase64) {
+          setStatus(data.error || "Unable to download filled PDF.");
+          return;
+        }
+        base64 = data.pdfBase64;
       }
-      if (!data.pdfBase64) {
-        setStatus("No PDF returned.");
-        return;
-      }
-      const filledBytes = base64ToUint8Array(data.pdfBase64);
-      const filledBlob = new Blob([filledBytes], {
-        type: "application/pdf",
-      });
+      const filledBytes = base64ToUint8Array(base64);
+      const filledBlob = new Blob([filledBytes], { type: "application/pdf" });
       const downloadUrl = URL.createObjectURL(filledBlob);
       const link = document.createElement("a");
       link.href = downloadUrl;
@@ -196,12 +243,9 @@ export default function Home() {
       link.click();
       link.remove();
       URL.revokeObjectURL(downloadUrl);
-      setStatus(null);
     } catch (error) {
-      console.error(error);
-      setStatus("Unable to fill the PDF.");
-    } finally {
-      setFilling(false);
+      console.error("Download error", error);
+      setStatus("Unable to download filled PDF.");
     }
   };
 
@@ -434,20 +478,7 @@ export default function Home() {
               <div className={styles.status}>{status}</div>
             ) : null}
 
-            {hasForm && (
-              <form className={styles.form} onSubmit={onSubmit}>
-                {fields.map((field) => renderField(field))}
-                <div className={styles.formActions}>
-                  <button
-                    type="submit"
-                    className={styles.primaryButton}
-                    disabled={filling}
-                  >
-                    {filling ? "Overlaying…" : "Apply answers & download an overlaid PDF"}
-                  </button>
-                </div>
-              </form>
-            )}
+            {hasForm && <form className={styles.form}>{fields.map((field) => renderField(field))}</form>}
 
             <div className={styles.footerActions} />
           </section>
@@ -466,8 +497,28 @@ export default function Home() {
             style={{ flexBasis: `${100 - split}%`, minWidth: "35%" }}
           >
             <div className={styles.panelHeader}>
-              <h2>Uploaded file</h2>
+              <h2>Preview</h2>
+              <button
+                type="button"
+                className={styles.secondaryButtonSmall}
+                onClick={downloadFilled}
+                disabled={!file || previewLoading}
+              >
+                {previewLoading ? "Rendering…" : "Download"}
+              </button>
             </div>
+            {previewLoading && <p className={styles.status}>Rendering preview…</p>}
+            {filledPreviewUrl ? (
+              <iframe
+                title="PDF preview"
+                src={filledPreviewUrl}
+                className={styles.previewFrame}
+              />
+            ) : (
+              <div className={styles.previewPlaceholder}>
+                <p>Your filled PDF preview will appear here.</p>
+              </div>
+            )}
             {previewUrl ? (
                   <iframe
                     title="PDF preview"
