@@ -41,7 +41,6 @@ export default function Home() {
   const [filledPreviewUrl, setFilledPreviewUrl] = useState<string | null>(null);
   const [filledPreviewBase64, setFilledPreviewBase64] = useState<string | null>(null);
   const [previewLoading, setPreviewLoading] = useState(false);
-  const previewUrl = useMemo(() => pdfUrl || undefined, [pdfUrl]);
 
   useEffect(() => {
     return () => {
