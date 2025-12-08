@@ -72,14 +72,38 @@ export default function Home() {
   };
 
   const convertImageToPdf = async (imageFile: File) => {
-    const bytes = new Uint8Array(await imageFile.arrayBuffer());
+    const normalizeToPngIfNeeded = async (file: File) => {
+      const type = file.type.toLowerCase();
+      if (type === "image/png" || type === "image/jpeg" || type === "image/jpg") {
+        return { file, kind: type === "image/png" ? "png" : ("jpeg" as const) };
+      }
+
+      // Convert unsupported formats (e.g., webp) to PNG via canvas.
+      const bitmap = await createImageBitmap(file);
+      const canvas = document.createElement("canvas");
+      canvas.width = bitmap.width;
+      canvas.height = bitmap.height;
+      const ctx = canvas.getContext("2d");
+      if (!ctx) throw new Error("Canvas unsupported");
+      ctx.drawImage(bitmap, 0, 0);
+      const blob = await new Promise<Blob>((resolve, reject) => {
+        canvas.toBlob(
+          (b) => (b ? resolve(b) : reject(new Error("Failed to convert image to PNG"))),
+          "image/png",
+        );
+      });
+      const pngFile = new File(
+        [blob],
+        file.name.replace(/\.[^.]+$/, "") + ".png",
+        { type: "image/png" },
+      );
+      return { file: pngFile, kind: "png" as const };
+    };
+
+    const { file: normalizedImage, kind } = await normalizeToPngIfNeeded(imageFile);
+    const bytes = new Uint8Array(await normalizedImage.arrayBuffer());
     const pdfDoc = await PDFDocument.create();
-    let embedded;
-    if (imageFile.type === "image/png") {
-      embedded = await pdfDoc.embedPng(bytes);
-    } else {
-      embedded = await pdfDoc.embedJpg(bytes);
-    }
+    const embedded = kind === "png" ? await pdfDoc.embedPng(bytes) : await pdfDoc.embedJpg(bytes);
     const { width, height } = embedded.scale(1);
     const page = pdfDoc.addPage([width, height]);
     page.drawImage(embedded, { x: 0, y: 0, width, height });
@@ -89,7 +113,7 @@ export default function Home() {
     const blob = new Blob([copy], { type: "application/pdf" });
     const pdfFile = new File(
       [blob],
-      imageFile.name.replace(/\.[^.]+$/, "") + ".pdf",
+      normalizedImage.name.replace(/\.[^.]+$/, "") + ".pdf",
       { type: "application/pdf" },
     );
     return { file: pdfFile, url: URL.createObjectURL(blob) };
