@@ -606,6 +606,7 @@ export default function Home() {
           >
             <div className={styles.panelHeader}>
               <h2>Preview</h2>
+              {previewLoading ? <span className={styles.badge}>... rendering ...</span> : null}
               <button
                 type="button"
                 className={styles.secondaryButtonSmall}
@@ -615,7 +616,6 @@ export default function Home() {
                 {previewLoading ? "Rendering…" : "Download⬇"}
               </button>
             </div>
-            {previewLoading && <p className={styles.status}>Rendering preview…</p>}
             {filledPreviewUrl ? (
               <iframe
                 title="PDF preview"
