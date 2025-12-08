@@ -290,7 +290,7 @@ export async function POST(request: NextRequest) {
             ? (field as Partial<DetectedField>).bbox
             : undefined;
         if (bboxValue) {
-          drawValueAtBBox(pdfDoc, { ...(field as DetectedField), bbox: bboxValue }, value);
+          await drawValueAtBBox(pdfDoc, { ...(field as DetectedField), bbox: bboxValue }, value);
         } else {
           console.warn(
             `No matching PDF field for "${field.name}". Available: ${availableFieldNames.join(", ")}`,
