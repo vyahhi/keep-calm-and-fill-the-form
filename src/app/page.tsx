@@ -313,7 +313,7 @@ export default function Home() {
       clearTimeout(timer);
     };
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [values, fields, file]);
+  }, [values, adjustedFields, fields, file]);
 
   const downloadFilled = async () => {
     if (!file) return;
