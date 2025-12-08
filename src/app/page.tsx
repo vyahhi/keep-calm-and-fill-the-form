@@ -607,7 +607,7 @@ export default function Home() {
                 onClick={downloadFilled}
                 disabled={!file || previewLoading}
               >
-                {previewLoading ? "Rendering…" : "Download"}
+                {previewLoading ? "Rendering…" : "Download⬇"}
               </button>
             </div>
             {previewLoading && <p className={styles.status}>Rendering preview…</p>}
