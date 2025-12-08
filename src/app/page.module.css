@@ -196,6 +196,12 @@
   color: #dfe7ff;
 }
 
+.inputRow {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
 .input,
 .form select {
   width: 100%;
@@ -222,6 +228,34 @@
   display: flex;
   flex-wrap: wrap;
   gap: 8px;
+}
+
+.nudgeGroup {
+  display: grid;
+  grid-template-columns: repeat(3, 28px);
+  grid-template-rows: repeat(3, 28px);
+  gap: 4px;
+}
+
+.nudgeGroup > .nudgeRow {
+  display: contents;
+}
+
+.nudgeBtn {
+  background: rgba(255, 255, 255, 0.08);
+  color: #f6fbff;
+  border: 1px solid rgba(255, 255, 255, 0.12);
+  border-radius: 6px;
+  width: 28px;
+  height: 28px;
+  font-size: 12px;
+  cursor: pointer;
+  transition: transform 0.1s ease, border-color 0.1s ease;
+}
+
+.nudgeBtn:hover {
+  transform: translateY(-1px);
+  border-color: #7c7bff;
 }
 
 .status {

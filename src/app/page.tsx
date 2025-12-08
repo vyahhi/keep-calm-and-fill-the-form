@@ -41,17 +41,22 @@ export default function Home() {
   const [filledPreviewUrl, setFilledPreviewUrl] = useState<string | null>(null);
   const [filledPreviewBase64, setFilledPreviewBase64] = useState<string | null>(null);
   const [previewLoading, setPreviewLoading] = useState(false);
+  const [adjustments, setAdjustments] = useState<
+    Record<string, { dx: number; dy: number; fontScale: number }>
+  >({});
 
   useEffect(() => {
     return () => {
       if (pdfUrl) URL.revokeObjectURL(pdfUrl);
+      if (filledPreviewUrl) URL.revokeObjectURL(filledPreviewUrl);
     };
-  }, [pdfUrl]);
+  }, [pdfUrl, filledPreviewUrl]);
 
   const hasForm = fields.length > 0;
 
   const resetAll = () => {
     if (pdfUrl) URL.revokeObjectURL(pdfUrl);
+    if (filledPreviewUrl) URL.revokeObjectURL(filledPreviewUrl);
     setFile(null);
     setPdfUrl(undefined);
     setFields([]);
@@ -60,10 +65,10 @@ export default function Home() {
     setDetecting(false);
     setFilling(false);
     setFormTitle("Form");
-    if (filledPreviewUrl) URL.revokeObjectURL(filledPreviewUrl);
     setFilledPreviewUrl(null);
     setFilledPreviewBase64(null);
     setPreviewLoading(false);
+    setAdjustments({});
   };
 
   const convertImageToPdf = async (imageFile: File) => {
@@ -165,6 +170,100 @@ export default function Home() {
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [file]);
 
+  const adjustedFields = useMemo(() => {
+    return fields.map((field) => {
+      const adj = adjustments[field.name];
+      if (!adj || !field.bbox) return field;
+      return {
+        ...field,
+        bbox: {
+          ...field.bbox,
+          x: field.bbox.x + adj.dx,
+          y: field.bbox.y + adj.dy,
+        },
+        fontScale: adj.fontScale,
+      };
+    });
+  }, [fields, adjustments]);
+
+  const nudgeField = (fieldName: string, dir: "up" | "down" | "left" | "right") => {
+    setAdjustments((prev) => {
+      const current = prev[fieldName] || { dx: 0, dy: 0, fontScale: 1 };
+      const delta = 0.005;
+      const next = { ...current };
+      if (dir === "up") next.dy -= delta;
+      if (dir === "down") next.dy += delta;
+      if (dir === "left") next.dx -= delta;
+      if (dir === "right") next.dx += delta;
+      return { ...prev, [fieldName]: next };
+    });
+  };
+
+  const scaleFieldFont = (fieldName: string, delta: number) => {
+    setAdjustments((prev) => {
+      const current = prev[fieldName] || { dx: 0, dy: 0, fontScale: 1 };
+      const nextScale = Math.min(2, Math.max(0.5, current.fontScale + delta));
+      return { ...prev, [fieldName]: { ...current, fontScale: nextScale } };
+    });
+  };
+
+  const renderAdjustButtons = (field: DetectedField) => (
+    <div className={styles.nudgeGroup}>
+      <button
+        type="button"
+        className={styles.nudgeBtn}
+        onClick={() => nudgeField(field.name, "up")}
+        title="Move up"
+      >
+        ↑
+      </button>
+      <div className={styles.nudgeRow}>
+        <button
+          type="button"
+          className={styles.nudgeBtn}
+          onClick={() => nudgeField(field.name, "left")}
+          title="Move left"
+        >
+          ←
+        </button>
+        <button
+          type="button"
+          className={styles.nudgeBtn}
+          onClick={() => nudgeField(field.name, "right")}
+          title="Move right"
+        >
+          →
+        </button>
+      </div>
+      <button
+        type="button"
+        className={styles.nudgeBtn}
+        onClick={() => nudgeField(field.name, "down")}
+        title="Move down"
+      >
+        ↓
+      </button>
+      <div className={styles.nudgeRow}>
+        <button
+          type="button"
+          className={styles.nudgeBtn}
+          onClick={() => scaleFieldFont(field.name, 0.05)}
+          title="Increase font size"
+        >
+          +
+        </button>
+        <button
+          type="button"
+          className={styles.nudgeBtn}
+          onClick={() => scaleFieldFont(field.name, -0.05)}
+          title="Decrease font size"
+        >
+          -
+        </button>
+      </div>
+    </div>
+  );
+
   useEffect(() => {
     if (!file || fields.length === 0) {
       if (filledPreviewUrl) URL.revokeObjectURL(filledPreviewUrl);
@@ -181,7 +280,7 @@ export default function Home() {
         const res = await fetch("/api/fill", {
           method: "POST",
           headers: { "Content-Type": "application/json" },
-          body: JSON.stringify({ pdfBase64: base64, values, fields }),
+          body: JSON.stringify({ pdfBase64: base64, values, fields: adjustedFields }),
         });
         const data = (await res.json()) as { pdfBase64?: string; error?: string };
         if (!res.ok || !data.pdfBase64) {
@@ -223,7 +322,7 @@ export default function Home() {
         const res = await fetch("/api/fill", {
           method: "POST",
           headers: { "Content-Type": "application/json" },
-          body: JSON.stringify({ pdfBase64, values, fields }),
+          body: JSON.stringify({ pdfBase64, values, fields: adjustedFields }),
         });
         const data = (await res.json()) as { pdfBase64?: string; error?: string };
         if (!res.ok || !data.pdfBase64) {
@@ -266,15 +365,21 @@ export default function Home() {
 
     if (field.type === "checkbox") {
       return (
-        <label className={styles.checkboxLabel} key={field.name}>
-          <input
-            type="checkbox"
-            name={field.name}
-            checked={Boolean(value)}
-            onChange={(event) => updateValue(field.name, event.target.checked)}
-          />
-          <span>{field.label}</span>
-        </label>
+        <div className={styles.field} key={field.name}>
+          <label className={styles.label}>{field.label}</label>
+          <div className={styles.inputRow}>
+            <label className={styles.checkboxLabel}>
+              <input
+                type="checkbox"
+                name={field.name}
+                checked={Boolean(value)}
+                onChange={(event) => updateValue(field.name, event.target.checked)}
+              />
+              <span>{field.label}</span>
+            </label>
+            {renderAdjustButtons(field)}
+          </div>
+        </div>
       );
     }
 
@@ -290,14 +395,13 @@ export default function Home() {
                   name={field.name}
                   value={opt}
                   checked={value === opt}
-                  onChange={(event) =>
-                    updateValue(field.name, event.target.value)
-                  }
+                  onChange={(event) => updateValue(field.name, event.target.value)}
                 />
                 {opt}
               </label>
             ))}
           </div>
+          {renderAdjustButtons(field)}
         </div>
       );
     }
@@ -308,16 +412,19 @@ export default function Home() {
           <label htmlFor={field.name} className={styles.label}>
             {field.label}
           </label>
-          <select
-            {...commonProps}
-            value={typeof value === "string" ? value : field.options[0]}
-          >
-            {field.options.map((opt) => (
-              <option key={opt} value={opt}>
-                {opt}
-              </option>
-            ))}
-          </select>
+          <div className={styles.inputRow}>
+            <select
+              {...commonProps}
+              value={typeof value === "string" ? value : field.options[0]}
+            >
+              {field.options.map((opt) => (
+                <option key={opt} value={opt}>
+                  {opt}
+                </option>
+              ))}
+            </select>
+            {renderAdjustButtons(field)}
+          </div>
         </div>
       );
     }
@@ -327,16 +434,13 @@ export default function Home() {
         <label htmlFor={field.name} className={styles.label}>
           {field.label}
         </label>
-        <input type={field.type || "text"} {...commonProps} />
+        <div className={styles.inputRow}>
+          <input type={field.type || "text"} {...commonProps} />
+          {renderAdjustButtons(field)}
+        </div>
       </div>
     );
   };
-
-  useMemo(() => {
-    if (!file) return "Upload any form and we’ll help you fill it.";
-    if (!hasForm) return "Finding fields to turn this file into a quick web form.";
-    return "Review detected fields, fill them out, and download an overlaid PDF.";
-  }, [file, hasForm]);
 
   const onDrag = (clientX: number) => {
     const container = layoutRef.current;
@@ -516,17 +620,6 @@ export default function Home() {
             ) : (
               <div className={styles.previewPlaceholder}>
                 <p>Your filled PDF preview will appear here.</p>
-              </div>
-            )}
-            {previewUrl ? (
-                  <iframe
-                    title="PDF preview"
-                    src={previewUrl}
-                    className={styles.previewFrame}
-                  />
-                ) : (
-                  <div className={styles.previewPlaceholder}>
-                    <p>Your PDF preview will appear here.</p>
               </div>
             )}
           </section>

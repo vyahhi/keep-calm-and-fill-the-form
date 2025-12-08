@@ -22,6 +22,7 @@ export interface DetectedField {
   options?: string[];
   placeholder?: string;
   bbox?: FieldBBox;
+  fontScale?: number;
 }
 
 export interface DetectionResponse {
